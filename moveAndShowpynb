@@ -1,0 +1,2804 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "f85a80d2",
+   "metadata": {},
+   "source": [
+    "## Basic Python - Project <a id='intro'></a>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a1262df4",
+   "metadata": {},
+   "source": [
+    "## Introduction <a id='intro'></a>\n",
+    "In this project, you will work with data from the entertainment industry. You will study a dataset with records on movies and shows. The research will focus on the \"Golden Age\" of television, which began in 1999 with the release of *The Sopranos* and is still ongoing.\n",
+    "\n",
+    "The aim of this project is to investigate how the number of votes a title receives impacts its ratings. The assumption is that highly-rated shows (we will focus on TV shows, ignoring movies) released during the \"Golden Age\" of television also have the most votes.\n",
+    "\n",
+    "### Stages \n",
+    "Data on movies and shows is stored in the `/datasets/movies_and_shows.csv` file. There is no information about the quality of the data, so you will need to explore it before doing the analysis.\n",
+    "\n",
+    "First, you'll evaluate the quality of the data and see whether its issues are significant. Then, during data preprocessing, you will try to account for the most critical problems.\n",
+    " \n",
+    "Your project will consist of three stages:\n",
+    " 1. Data overview\n",
+    " 2. Data preprocessing\n",
+    " 3. Data analysis"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ac0593ac",
+   "metadata": {},
+   "source": [
+    "## Stage 1. Data overview <a id='data_review'></a>\n",
+    "\n",
+    "Open and explore the data."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e86ed00e",
+   "metadata": {},
+   "source": [
+    "You'll need `pandas`, so import it."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "1727d3f8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# importing pandas\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9821beeb",
+   "metadata": {},
+   "source": [
+    "Read the `movies_and_shows.csv` file from the `datasets` folder and save it in the `df` variable:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "fc5a1402",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# reading the files and storing them to df\n",
+    "df = pd.read_csv('/datasets/movies_and_shows.csv')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1cd0a96d",
+   "metadata": {},
+   "source": [
+    "Print the first 10 table rows:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "acd92001",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>Character</th>\n",
+       "      <th>r0le</th>\n",
+       "      <th>TITLE</th>\n",
+       "      <th>Type</th>\n",
+       "      <th>release Year</th>\n",
+       "      <th>genres</th>\n",
+       "      <th>imdb sc0re</th>\n",
+       "      <th>imdb v0tes</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Robert De Niro</td>\n",
+       "      <td>Travis Bickle</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Jodie Foster</td>\n",
+       "      <td>Iris Steensma</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Albert Brooks</td>\n",
+       "      <td>Tom</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Harvey Keitel</td>\n",
+       "      <td>Matthew 'Sport' Higgins</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Cybill Shepherd</td>\n",
+       "      <td>Betsy</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>Peter Boyle</td>\n",
+       "      <td>Wizard</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Leonard Harris</td>\n",
+       "      <td>Senator Charles Palantine</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Diahnne Abbott</td>\n",
+       "      <td>Concession Girl</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Gino Ardito</td>\n",
+       "      <td>Policeman at Rally</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>Martin Scorsese</td>\n",
+       "      <td>Passenger Watching Silhouette</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Taxi Driver</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>808582.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "              name                      Character   r0le        TITLE   Type  \\\n",
+       "0   Robert De Niro                  Travis Bickle  ACTOR  Taxi Driver  MOVIE   \n",
+       "1     Jodie Foster                  Iris Steensma  ACTOR  Taxi Driver  MOVIE   \n",
+       "2    Albert Brooks                            Tom  ACTOR  Taxi Driver  MOVIE   \n",
+       "3    Harvey Keitel        Matthew 'Sport' Higgins  ACTOR  Taxi Driver  MOVIE   \n",
+       "4  Cybill Shepherd                          Betsy  ACTOR  Taxi Driver  MOVIE   \n",
+       "5      Peter Boyle                         Wizard  ACTOR  Taxi Driver  MOVIE   \n",
+       "6   Leonard Harris      Senator Charles Palantine  ACTOR  Taxi Driver  MOVIE   \n",
+       "7   Diahnne Abbott                Concession Girl  ACTOR  Taxi Driver  MOVIE   \n",
+       "8      Gino Ardito             Policeman at Rally  ACTOR  Taxi Driver  MOVIE   \n",
+       "9  Martin Scorsese  Passenger Watching Silhouette  ACTOR  Taxi Driver  MOVIE   \n",
+       "\n",
+       "   release Year              genres  imdb sc0re  imdb v0tes  \n",
+       "0          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "1          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "2          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "3          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "4          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "5          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "6          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "7          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "8          1976  ['drama', 'crime']         8.2    808582.0  \n",
+       "9          1976  ['drama', 'crime']         8.2    808582.0  "
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# obtaining the first 10 rows from the df table\n",
+    "# hint: you can use head() and tail() in Jupyter Notebook without wrapping them into print()\n",
+    "df.head(10)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e579aa91",
+   "metadata": {},
+   "source": [
+    "Obtain the general information about the table with one command:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "7bf66d2a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 85579 entries, 0 to 85578\n",
+      "Data columns (total 9 columns):\n",
+      " #   Column        Non-Null Count  Dtype  \n",
+      "---  ------        --------------  -----  \n",
+      " 0      name       85579 non-null  object \n",
+      " 1   Character     85579 non-null  object \n",
+      " 2   r0le          85579 non-null  object \n",
+      " 3   TITLE         85578 non-null  object \n",
+      " 4     Type        85579 non-null  object \n",
+      " 5   release Year  85579 non-null  int64  \n",
+      " 6   genres        85579 non-null  object \n",
+      " 7   imdb sc0re    80970 non-null  float64\n",
+      " 8   imdb v0tes    80853 non-null  float64\n",
+      "dtypes: float64(2), int64(1), object(6)\n",
+      "memory usage: 5.9+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "# obtaining general information about the data in df\n",
+    "df.info()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e91f62a7",
+   "metadata": {},
+   "source": [
+    "The table contains nine columns. The majority store the same data type: object. The only exceptions are `'release Year'` (int64 type), `'imdb sc0re'` (float64 type) and `'imdb v0tes'` (float64 type). Scores and votes will be used in our analysis, so it's important to verify that they are present in the dataframe in the appropriate numeric format. Three columns (`'TITLE'`, `'imdb sc0re'` and `'imdb v0tes'`) have missing values.\n",
+    "\n",
+    "According to the documentation:\n",
+    "- `'name'` — actor/director's name and last name\n",
+    "- `'Character'` — character played (for actors)\n",
+    "- `'r0le '` — the person's contribution to the title (it can be in the capacity of either actor or director)\n",
+    "- `'TITLE '` — title of the movie (show)\n",
+    "- `'  Type'` — show or movie\n",
+    "- `'release Year'` — year when movie (show) was released\n",
+    "- `'genres'` — list of genres under which the movie (show) falls\n",
+    "- `'imdb sc0re'` — score on IMDb\n",
+    "- `'imdb v0tes'` — votes on IMDb\n",
+    "\n",
+    "We can see three issues with the column names:\n",
+    "1. Some names are uppercase, while others are lowercase.\n",
+    "2. There are names containing whitespace.\n",
+    "3. A few column names have digit '0' instead of letter 'o'. \n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4355de7b",
+   "metadata": {},
+   "source": [
+    "### Conclusions <a id='data_review_conclusions'></a> \n",
+    "\n",
+    "Each row in the table stores data about a movie or show. The columns can be divided into two categories: the first is about the roles held by different people who worked on the movie or show (role, name of the actor or director, and character if the row is about an actor); the second category is information about the movie or show itself (title, release year, genre, imdb figures).\n",
+    "\n",
+    "It's clear that there is sufficient data to do the analysis and evaluate our assumption. However, to move forward, we need to preprocess the data."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c5dc9111",
+   "metadata": {},
+   "source": [
+    "## Stage 2. Data preprocessing <a id='data_preprocessing'></a>\n",
+    "Correct the formatting in the column headers and deal with the missing values. Then, check whether there are duplicates in the data."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "9c850d13",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['   name', 'Character', 'r0le', 'TITLE', '  Type', 'release Year',\n",
+       "       'genres', 'imdb sc0re', 'imdb v0tes'],\n",
+       "      dtype='object')"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# the list of column names in the df table\n",
+    "df.columns"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5f966df9",
+   "metadata": {},
+   "source": [
+    "Change the column names according to the rules of good style:\n",
+    "* If the name has several words, use snake_case\n",
+    "* All characters must be lowercase\n",
+    "* Remove whitespace\n",
+    "* Replace zero with letter 'o'"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "23a1dc11",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['   name',\n",
+       " 'Character',\n",
+       " 'r0le',\n",
+       " 'TITLE',\n",
+       " '  Type',\n",
+       " 'release Year',\n",
+       " 'genres',\n",
+       " 'imdb sc0re',\n",
+       " 'imdb v0tes']"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# renaming columns\n",
+    "column_names = list(df.columns) \n",
+    "column_names"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "f3cc7e72",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['name',\n",
+       " 'Character',\n",
+       " 'r0le',\n",
+       " 'TITLE',\n",
+       " 'Type',\n",
+       " 'release Year',\n",
+       " 'genres',\n",
+       " 'imdb sc0re',\n",
+       " 'imdb v0tes']"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#remove white space\n",
+    "def remove_white_space(dataframe,col_names):\n",
+    "    '''will remove white space in the column'''\n",
+    "    for col in col_names:\n",
+    "        dataframe = dataframe.rename(columns = {col:col.strip()})\n",
+    "    return dataframe\n",
+    "\n",
+    "df = remove_white_space(df,column_names)\n",
+    "column_names = list(df.columns)\n",
+    "column_names"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "3bffb935",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['name',\n",
+       " 'character',\n",
+       " 'r0le',\n",
+       " 'title',\n",
+       " 'type',\n",
+       " 'release year',\n",
+       " 'genres',\n",
+       " 'imdb sc0re',\n",
+       " 'imdb v0tes']"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#make columns lowercase\n",
+    "def lower_case(dataframe,col_names):\n",
+    "    '''will make columns lowercase'''\n",
+    "    for col in col_names:\n",
+    "        dataframe = dataframe.rename(columns = {col:col.lower()})\n",
+    "    return dataframe\n",
+    "\n",
+    "df = lower_case(df,column_names)\n",
+    "column_names = list(df.columns)\n",
+    "column_names"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "73da2b96",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['name',\n",
+       " 'character',\n",
+       " 'role',\n",
+       " 'title',\n",
+       " 'type',\n",
+       " 'release year',\n",
+       " 'genres',\n",
+       " 'imdb score',\n",
+       " 'imdb votes']"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#replace 0 with o\n",
+    "def replace_zero(dataframe,col_names):\n",
+    "    '''will make columns that have zero with o'''\n",
+    "    for col in col_names:\n",
+    "        dataframe = dataframe.rename(columns = {col:col.replace('0','o')})\n",
+    "    return dataframe\n",
+    "\n",
+    "df = replace_zero(df,column_names)\n",
+    "column_names = list(df.columns)\n",
+    "column_names"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "f53bf39f",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['name',\n",
+       " 'character',\n",
+       " 'role',\n",
+       " 'title',\n",
+       " 'type',\n",
+       " 'release_year',\n",
+       " 'genres',\n",
+       " 'imdb_score',\n",
+       " 'imdb_votes']"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#use snake case\n",
+    "def replace_zero(dataframe,col_names):\n",
+    "    '''will make columns with more than one words use snake case'''\n",
+    "    for col in col_names:\n",
+    "        dataframe = dataframe.rename(columns = {col:col.replace(' ','_')})\n",
+    "    return dataframe\n",
+    "\n",
+    "df = replace_zero(df,column_names)\n",
+    "column_names = list(df.columns)\n",
+    "column_names"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "464fbd04",
+   "metadata": {},
+   "source": [
+    "Check the result. Print the names of the columns once more:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "0eb6527f",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['name', 'character', 'role', 'title', 'type', 'release_year', 'genres',\n",
+       "       'imdb_score', 'imdb_votes'],\n",
+       "      dtype='object')"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# checking result: the list of column names\n",
+    "df.columns"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "14d9c319",
+   "metadata": {},
+   "source": [
+    "### Missing values <a id='missing_values'></a>\n",
+    "First, find the number of missing values in the table. To do so, combine two `pandas` methods:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "21c427f2",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "name               0\n",
+       "character          0\n",
+       "role               0\n",
+       "title              1\n",
+       "type               0\n",
+       "release_year       0\n",
+       "genres             0\n",
+       "imdb_score      4609\n",
+       "imdb_votes      4726\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# calculating missing values\n",
+    "df.isna().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c8272df3",
+   "metadata": {},
+   "source": [
+    "We identified missing values in several columns. While the missing value in `'title'` isn't critical, missing values in `'imdb_score'` and `'imdb_votes'` affect around 6% of the data, which could impact our analysis. To ensure data integrity, we'll drop all rows with missing values."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "599d5550",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# dropping rows where columns with scores, and votes have missing values\n",
+    "df = df.dropna(subset = ['imdb_votes','imdb_score']).reset_index(drop=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2156887f",
+   "metadata": {},
+   "source": [
+    "Make sure the table doesn't contain any more missing values. Count the missing values again."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "55c0b0ce",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "name            0\n",
+       "character       0\n",
+       "role            0\n",
+       "title           0\n",
+       "type            0\n",
+       "release_year    0\n",
+       "genres          0\n",
+       "imdb_score      0\n",
+       "imdb_votes      0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# counting missing values\n",
+    "df.isna().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a7dc7aa0",
+   "metadata": {},
+   "source": [
+    "### Duplicates <a id='duplicates'></a>\n",
+    "Find the number of duplicate rows in the table using one command:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "id": "9227df01",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "6994"
+      ]
+     },
+     "execution_count": 28,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# counting duplicate rows\n",
+    "df.duplicated().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5f6eb0fc",
+   "metadata": {},
+   "source": [
+    "Review the duplicate rows to determine if removing them would distort our dataset."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "bcf32fcb",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>character</th>\n",
+       "      <th>role</th>\n",
+       "      <th>title</th>\n",
+       "      <th>type</th>\n",
+       "      <th>release_year</th>\n",
+       "      <th>genres</th>\n",
+       "      <th>imdb_score</th>\n",
+       "      <th>imdb_votes</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>7420</th>\n",
+       "      <td>Philip Greene</td>\n",
+       "      <td>Baseball Fan (uncredited)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>How Do You Know</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2010</td>\n",
+       "      <td>['comedy', 'drama', 'romance']</td>\n",
+       "      <td>5.4</td>\n",
+       "      <td>50383.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14071</th>\n",
+       "      <td>Dan Levy</td>\n",
+       "      <td>Reporter</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>A Very Harold &amp; Kumar Christmas</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2011</td>\n",
+       "      <td>['comedy', 'fantasy', 'romance']</td>\n",
+       "      <td>6.2</td>\n",
+       "      <td>69562.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>18359</th>\n",
+       "      <td>Nicolas Le Nev??</td>\n",
+       "      <td>unknown</td>\n",
+       "      <td>DIRECTOR</td>\n",
+       "      <td>Sammy &amp; Co</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2014</td>\n",
+       "      <td>['animation', 'european']</td>\n",
+       "      <td>5.7</td>\n",
+       "      <td>31.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>21837</th>\n",
+       "      <td>John Iii Franklin</td>\n",
+       "      <td>Himself</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Last Chance U</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2016</td>\n",
+       "      <td>['documentation', 'sport']</td>\n",
+       "      <td>8.4</td>\n",
+       "      <td>6897.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>28746</th>\n",
+       "      <td>Claudio Roca</td>\n",
+       "      <td>Nicol?­s</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Narcos: Mexico</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2018</td>\n",
+       "      <td>['drama', 'crime']</td>\n",
+       "      <td>8.4</td>\n",
+       "      <td>82042.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>80843</th>\n",
+       "      <td>Jessica Cediel</td>\n",
+       "      <td>Liliana Navarro</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Lokillo</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['comedy']</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>68.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>80844</th>\n",
+       "      <td>Javier Gardeaz?­bal</td>\n",
+       "      <td>Agust??n \"Peluca\" Ort??z</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Lokillo</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['comedy']</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>68.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>80845</th>\n",
+       "      <td>Carla Giraldo</td>\n",
+       "      <td>Valery Reinoso</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Lokillo</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['comedy']</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>68.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>80846</th>\n",
+       "      <td>Ana Mar??a S?­nchez</td>\n",
+       "      <td>Lourdes</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Lokillo</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['comedy']</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>68.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>80851</th>\n",
+       "      <td>Isabel Gaona</td>\n",
+       "      <td>Cacica</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Lokillo</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['comedy']</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>68.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>6994 rows × 9 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                      name                  character      role  \\\n",
+       "7420         Philip Greene  Baseball Fan (uncredited)     ACTOR   \n",
+       "14071             Dan Levy                   Reporter     ACTOR   \n",
+       "18359     Nicolas Le Nev??                    unknown  DIRECTOR   \n",
+       "21837    John Iii Franklin                    Himself     ACTOR   \n",
+       "28746         Claudio Roca                   Nicol?­s     ACTOR   \n",
+       "...                    ...                        ...       ...   \n",
+       "80843       Jessica Cediel            Liliana Navarro     ACTOR   \n",
+       "80844  Javier Gardeaz?­bal   Agust??n \"Peluca\" Ort??z     ACTOR   \n",
+       "80845        Carla Giraldo             Valery Reinoso     ACTOR   \n",
+       "80846  Ana Mar??a S?­nchez                    Lourdes     ACTOR   \n",
+       "80851         Isabel Gaona                     Cacica     ACTOR   \n",
+       "\n",
+       "                                 title   type  release_year  \\\n",
+       "7420                   How Do You Know  MOVIE          2010   \n",
+       "14071  A Very Harold & Kumar Christmas  MOVIE          2011   \n",
+       "18359                       Sammy & Co   SHOW          2014   \n",
+       "21837                    Last Chance U   SHOW          2016   \n",
+       "28746                   Narcos: Mexico   SHOW          2018   \n",
+       "...                                ...    ...           ...   \n",
+       "80843                          Lokillo  MOVIE          2021   \n",
+       "80844                          Lokillo  MOVIE          2021   \n",
+       "80845                          Lokillo  MOVIE          2021   \n",
+       "80846                          Lokillo  MOVIE          2021   \n",
+       "80851                          Lokillo  MOVIE          2021   \n",
+       "\n",
+       "                                 genres  imdb_score  imdb_votes  \n",
+       "7420     ['comedy', 'drama', 'romance']         5.4     50383.0  \n",
+       "14071  ['comedy', 'fantasy', 'romance']         6.2     69562.0  \n",
+       "18359         ['animation', 'european']         5.7        31.0  \n",
+       "21837        ['documentation', 'sport']         8.4      6897.0  \n",
+       "28746                ['drama', 'crime']         8.4     82042.0  \n",
+       "...                                 ...         ...         ...  \n",
+       "80843                        ['comedy']         3.8        68.0  \n",
+       "80844                        ['comedy']         3.8        68.0  \n",
+       "80845                        ['comedy']         3.8        68.0  \n",
+       "80846                        ['comedy']         3.8        68.0  \n",
+       "80851                        ['comedy']         3.8        68.0  \n",
+       "\n",
+       "[6994 rows x 9 columns]"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Produce table with duplicates (with original rows included) and review last 5 rows\n",
+    "duplicates = df[df.duplicated()]\n",
+    "duplicates"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a1ed6640",
+   "metadata": {},
+   "source": [
+    "There are two clear duplicates in the printed rows. We can safely remove them.\n",
+    "Call the `pandas` method for getting rid of duplicate rows:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "724d5bc8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# removing duplicate rows\n",
+    "df = df.drop_duplicates().reset_index(drop=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fc8c77ba",
+   "metadata": {},
+   "source": [
+    "Check for duplicate rows once more to make sure you have removed all of them:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "8091a9bc",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# checking for duplicates\n",
+    "df.duplicated().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1d802b07",
+   "metadata": {},
+   "source": [
+    "Now get rid of implicit duplicates in the `'type'` column. For example, the string `'SHOW'` can be written in different ways. These kinds of errors will also affect the result."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d5f987ed",
+   "metadata": {},
+   "source": [
+    "Print a list of unique `'type'` names, sorted in alphabetical order. To do so:\n",
+    "* Retrieve the intended dataframe column \n",
+    "* Apply a sorting method to it\n",
+    "* For the sorted column, call the method that will return all unique column values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "id": "3d7b0ac5",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['MOVIE', 'the movie', 'tv show', 'shows', 'movies', 'tv shows',\n",
+       "       'tv series', 'tv', 'SHOW'], dtype=object)"
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# viewing unique type names\n",
+    "df['type'].unique()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ac6e8b18",
+   "metadata": {},
+   "source": [
+    "Look through the list to find implicit duplicates of `'show'` (`'movie'` duplicates will be ignored since the assumption is about shows). These could be names written incorrectly or alternative names of the same genre.\n",
+    "\n",
+    "You will see the following implicit duplicates:\n",
+    "* `'shows'`\n",
+    "* `'SHOW'`\n",
+    "* `'tv show'`\n",
+    "* `'tv shows'`\n",
+    "* `'tv series'`\n",
+    "* `'tv'`\n",
+    "\n",
+    "To get rid of them, declare the function `replace_wrong_show()` with two parameters: \n",
+    "* `wrong_shows_list=` — the list of duplicates\n",
+    "* `correct_show=` — the string with the correct value\n",
+    "\n",
+    "The function should correct the names in the `'type'` column from the `df` table (i.e., replace each value from the `wrong_shows_list` list with the value in `correct_show`)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "bff944f9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# function for replacing implicit duplicates\n",
+    "def replace_wrong_show(dataframe,column_name,wrong_shows_list, correct_show):\n",
+    "    dataframe[column_name] = dataframe[column_name].replace(wrong_shows_list,correct_show)\n",
+    "    return dataframe"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d02d13a6",
+   "metadata": {},
+   "source": [
+    "Call `replace_wrong_show()` and pass it arguments so that it clears implicit duplicates and replaces them with `SHOW`:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "bcb5df7d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['tv show', 'shows', 'tv shows', 'tv series', 'tv', 'SHOW']"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "show_list = [x for x in list(df['type'].unique()) if 'movie' not in x.lower()]\n",
+    "show_list"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "id": "a2217e53",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# removing implicit duplicates\n",
+    "df = replace_wrong_show(dataframe=df,column_name='type',wrong_shows_list=show_list, correct_show='SHOW')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "318b09f7",
+   "metadata": {},
+   "source": [
+    "Make sure the duplicate names are removed. Print the list of unique values from the `'type'` column:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "id": "25d49d73",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['MOVIE', 'the movie', 'SHOW', 'movies'], dtype=object)"
+      ]
+     },
+     "execution_count": 38,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# viewing unique genre names\n",
+    "df['type'].unique()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "18b2049e",
+   "metadata": {},
+   "source": [
+    "### Conclusions <a id='data_preprocessing_conclusions'></a>\n",
+    "We detected three issues with the data:\n",
+    "\n",
+    "- Incorrect header styles\n",
+    "- Missing values\n",
+    "- Duplicate rows and implicit duplicates\n",
+    "\n",
+    "The headers have been cleaned up to make processing the table simpler.\n",
+    "\n",
+    "All rows with missing values have been removed. \n",
+    "\n",
+    "The absence of duplicates will make the results more precise and easier to understand.\n",
+    "\n",
+    "Now we can move on to our analysis of the prepared data."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1aa0f1b1",
+   "metadata": {},
+   "source": [
+    "## Stage 3. Data analysis <a id='hypotheses'></a>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f8fb6a0e",
+   "metadata": {},
+   "source": [
+    "Based on the previous project stages, you can now define how the assumption will be checked. Calculate the average amount of votes for each score (this data is available in the `imdb_score` and `imdb_votes` columns), and then check how these averages relate to each other. If the averages for shows with the highest scores are bigger than those for shows with lower scores, the assumption appears to be true.\n",
+    "\n",
+    "Based on this, complete the following steps:\n",
+    "\n",
+    "- Filter the dataframe to only include shows released in 1999 or later.\n",
+    "- Group scores into buckets by rounding the values of the appropriate column (a set of 1-10 integers will help us make the outcome of our calculations more evident without damaging the quality of our research).\n",
+    "- Identify outliers among scores based on their number of votes, and exclude scores with few votes.\n",
+    "- Calculate the average votes for each score and check whether the assumption matches the results."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0ea2cb51",
+   "metadata": {},
+   "source": [
+    "To filter the dataframe and only include shows released in 1999 or later, you will take two steps. First, keep only titles published in 1999 or later in our dataframe. Then, filter the table to only contain shows (movies will be removed)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "6a704aa1",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>character</th>\n",
+       "      <th>role</th>\n",
+       "      <th>title</th>\n",
+       "      <th>type</th>\n",
+       "      <th>release_year</th>\n",
+       "      <th>genres</th>\n",
+       "      <th>imdb_score</th>\n",
+       "      <th>imdb_votes</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1661</th>\n",
+       "      <td>Jeff Probst</td>\n",
+       "      <td>Himself - Host</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Survivor</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>['reality']</td>\n",
+       "      <td>7.4</td>\n",
+       "      <td>24687.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1952</th>\n",
+       "      <td>Benicio del Toro</td>\n",
+       "      <td>Franky Four Fingers</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Snatch</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>['crime', 'comedy']</td>\n",
+       "      <td>8.3</td>\n",
+       "      <td>841435.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1953</th>\n",
+       "      <td>Dennis Farina</td>\n",
+       "      <td>Cousin Avi</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Snatch</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>['crime', 'comedy']</td>\n",
+       "      <td>8.3</td>\n",
+       "      <td>841435.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1954</th>\n",
+       "      <td>Vinnie Jones</td>\n",
+       "      <td>Bullet Tooth Tony</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Snatch</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>['crime', 'comedy']</td>\n",
+       "      <td>8.3</td>\n",
+       "      <td>841435.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1955</th>\n",
+       "      <td>Brad Pitt</td>\n",
+       "      <td>Mickey O'Neil</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Snatch</td>\n",
+       "      <td>MOVIE</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>['crime', 'comedy']</td>\n",
+       "      <td>8.3</td>\n",
+       "      <td>841435.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  name            character   role     title   type  \\\n",
+       "1661       Jeff Probst       Himself - Host  ACTOR  Survivor   SHOW   \n",
+       "1952  Benicio del Toro  Franky Four Fingers  ACTOR    Snatch  MOVIE   \n",
+       "1953     Dennis Farina           Cousin Avi  ACTOR    Snatch  MOVIE   \n",
+       "1954      Vinnie Jones    Bullet Tooth Tony  ACTOR    Snatch  MOVIE   \n",
+       "1955         Brad Pitt        Mickey O'Neil  ACTOR    Snatch  MOVIE   \n",
+       "\n",
+       "      release_year               genres  imdb_score  imdb_votes  \n",
+       "1661          2000          ['reality']         7.4     24687.0  \n",
+       "1952          2000  ['crime', 'comedy']         8.3    841435.0  \n",
+       "1953          2000  ['crime', 'comedy']         8.3    841435.0  \n",
+       "1954          2000  ['crime', 'comedy']         8.3    841435.0  \n",
+       "1955          2000  ['crime', 'comedy']         8.3    841435.0  "
+      ]
+     },
+     "execution_count": 41,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# using conditional indexing modify df so it has only titles released after 1999 (with 1999 included)\n",
+    "# give the slice of dataframe new name\n",
+    "\n",
+    "df_after_1999 = df[df['release_year'] >= 1999]\n",
+    "df_after_1999.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "128dc6a9",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>character</th>\n",
+       "      <th>role</th>\n",
+       "      <th>title</th>\n",
+       "      <th>type</th>\n",
+       "      <th>release_year</th>\n",
+       "      <th>genres</th>\n",
+       "      <th>imdb_score</th>\n",
+       "      <th>imdb_votes</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1661</th>\n",
+       "      <td>Jeff Probst</td>\n",
+       "      <td>Himself - Host</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Survivor</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>['reality']</td>\n",
+       "      <td>7.4</td>\n",
+       "      <td>24687.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2073</th>\n",
+       "      <td>Mayumi Tanaka</td>\n",
+       "      <td>Monkey D. Luffy (voice)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>One Piece</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>1999</td>\n",
+       "      <td>['animation', 'action', 'comedy', 'drama', 'fa...</td>\n",
+       "      <td>8.8</td>\n",
+       "      <td>117129.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2074</th>\n",
+       "      <td>Kazuya Nakai</td>\n",
+       "      <td>Roronoa Zoro (voice)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>One Piece</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>1999</td>\n",
+       "      <td>['animation', 'action', 'comedy', 'drama', 'fa...</td>\n",
+       "      <td>8.8</td>\n",
+       "      <td>117129.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2075</th>\n",
+       "      <td>Akemi Okamura</td>\n",
+       "      <td>Nami (voice)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>One Piece</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>1999</td>\n",
+       "      <td>['animation', 'action', 'comedy', 'drama', 'fa...</td>\n",
+       "      <td>8.8</td>\n",
+       "      <td>117129.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2076</th>\n",
+       "      <td>Kappei Yamaguchi</td>\n",
+       "      <td>Usopp (voice)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>One Piece</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>1999</td>\n",
+       "      <td>['animation', 'action', 'comedy', 'drama', 'fa...</td>\n",
+       "      <td>8.8</td>\n",
+       "      <td>117129.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  name                character   role      title  type  \\\n",
+       "1661       Jeff Probst           Himself - Host  ACTOR   Survivor  SHOW   \n",
+       "2073     Mayumi Tanaka  Monkey D. Luffy (voice)  ACTOR  One Piece  SHOW   \n",
+       "2074      Kazuya Nakai     Roronoa Zoro (voice)  ACTOR  One Piece  SHOW   \n",
+       "2075     Akemi Okamura             Nami (voice)  ACTOR  One Piece  SHOW   \n",
+       "2076  Kappei Yamaguchi            Usopp (voice)  ACTOR  One Piece  SHOW   \n",
+       "\n",
+       "      release_year                                             genres  \\\n",
+       "1661          2000                                        ['reality']   \n",
+       "2073          1999  ['animation', 'action', 'comedy', 'drama', 'fa...   \n",
+       "2074          1999  ['animation', 'action', 'comedy', 'drama', 'fa...   \n",
+       "2075          1999  ['animation', 'action', 'comedy', 'drama', 'fa...   \n",
+       "2076          1999  ['animation', 'action', 'comedy', 'drama', 'fa...   \n",
+       "\n",
+       "      imdb_score  imdb_votes  \n",
+       "1661         7.4     24687.0  \n",
+       "2073         8.8    117129.0  \n",
+       "2074         8.8    117129.0  \n",
+       "2075         8.8    117129.0  \n",
+       "2076         8.8    117129.0  "
+      ]
+     },
+     "execution_count": 42,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# repeat conditional indexing so df has only shows (movies are removed as result)\n",
+    "df_only_shows = df_after_1999[df_after_1999['type']=='SHOW']\n",
+    "df_only_shows.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9648040c",
+   "metadata": {},
+   "source": [
+    "The scores that are to be grouped should be rounded. For instance, titles with scores like 7.8, 8.1, and 8.3 will all be placed in the same bucket with a score of 8."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "id": "54bbd5c0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/tmp/ipykernel_33/1103168508.py:2: SettingWithCopyWarning: \n",
+      "A value is trying to be set on a copy of a slice from a DataFrame.\n",
+      "Try using .loc[row_indexer,col_indexer] = value instead\n",
+      "\n",
+      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
+      "  df_only_shows['imdb_score_rounded'] = df_only_shows['imdb_score'].agg(lambda x: round(x))\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>character</th>\n",
+       "      <th>role</th>\n",
+       "      <th>title</th>\n",
+       "      <th>type</th>\n",
+       "      <th>release_year</th>\n",
+       "      <th>genres</th>\n",
+       "      <th>imdb_score</th>\n",
+       "      <th>imdb_votes</th>\n",
+       "      <th>imdb_score_rounded</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>73831</th>\n",
+       "      <td>Maneerat Kam-Uan</td>\n",
+       "      <td>Ae</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Let's Eat</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['drama', 'comedy']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>73832</th>\n",
+       "      <td>Rudklao Amratisha</td>\n",
+       "      <td>unknown</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Let's Eat</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['drama', 'comedy']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>73833</th>\n",
+       "      <td>Jaturong Mokjok</td>\n",
+       "      <td>unknown</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Let's Eat</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['drama', 'comedy']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>73834</th>\n",
+       "      <td>Pisamai Wilaisak</td>\n",
+       "      <td>unknown</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Let's Eat</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['drama', 'comedy']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>73835</th>\n",
+       "      <td>Sarawut Wichiensarn</td>\n",
+       "      <td>unknown</td>\n",
+       "      <td>DIRECTOR</td>\n",
+       "      <td>Let's Eat</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2021</td>\n",
+       "      <td>['drama', 'comedy']</td>\n",
+       "      <td>8.2</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                      name character      role      title  type  release_year  \\\n",
+       "73831     Maneerat Kam-Uan        Ae     ACTOR  Let's Eat  SHOW          2021   \n",
+       "73832    Rudklao Amratisha   unknown     ACTOR  Let's Eat  SHOW          2021   \n",
+       "73833      Jaturong Mokjok   unknown     ACTOR  Let's Eat  SHOW          2021   \n",
+       "73834     Pisamai Wilaisak   unknown     ACTOR  Let's Eat  SHOW          2021   \n",
+       "73835  Sarawut Wichiensarn   unknown  DIRECTOR  Let's Eat  SHOW          2021   \n",
+       "\n",
+       "                    genres  imdb_score  imdb_votes  imdb_score_rounded  \n",
+       "73831  ['drama', 'comedy']         8.2         5.0                   8  \n",
+       "73832  ['drama', 'comedy']         8.2         5.0                   8  \n",
+       "73833  ['drama', 'comedy']         8.2         5.0                   8  \n",
+       "73834  ['drama', 'comedy']         8.2         5.0                   8  \n",
+       "73835  ['drama', 'comedy']         8.2         5.0                   8  "
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# rounding column with scores\n",
+    "df_only_shows['imdb_score_rounded'] = df_only_shows['imdb_score'].agg(lambda x: round(x)) \n",
+    "\n",
+    "#checking the outcome with tail()\n",
+    "df_only_shows.tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "36dbd00a",
+   "metadata": {},
+   "source": [
+    "It is now time to identify outliers based on the number of votes."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "id": "b8b55e95",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "imdb_score_rounded\n",
+       "2       24\n",
+       "3       27\n",
+       "4      180\n",
+       "5      592\n",
+       "6     2494\n",
+       "7     4706\n",
+       "8     4842\n",
+       "9      557\n",
+       "10       8\n",
+       "Name: name, dtype: int64"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Use groupby() for scores and count all unique values in each group, print the result\n",
+    "df_only_shows.groupby('imdb_score_rounded')['name'].count()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1ba6daae",
+   "metadata": {},
+   "source": [
+    "Based on the aggregation performed, it is evident that scores 2 (24 voted shows), 3 (27 voted shows), and 10 (only 8 voted shows) are outliers. There isn't enough data for these scores for the average number of votes to be meaningful."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bd468c46",
+   "metadata": {},
+   "source": [
+    "To obtain the mean numbers of votes for the selected scores (we identified a range of 4-9 as acceptable), use conditional filtering and grouping."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "id": "d1867e0e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>character</th>\n",
+       "      <th>role</th>\n",
+       "      <th>title</th>\n",
+       "      <th>type</th>\n",
+       "      <th>release_year</th>\n",
+       "      <th>genres</th>\n",
+       "      <th>imdb_score</th>\n",
+       "      <th>imdb_votes</th>\n",
+       "      <th>imdb_score_rounded</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1661</th>\n",
+       "      <td>Jeff Probst</td>\n",
+       "      <td>Himself - Host</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>Survivor</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>['reality']</td>\n",
+       "      <td>7.4</td>\n",
+       "      <td>24687.0</td>\n",
+       "      <td>7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2073</th>\n",
+       "      <td>Mayumi Tanaka</td>\n",
+       "      <td>Monkey D. Luffy (voice)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>One Piece</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>1999</td>\n",
+       "      <td>['animation', 'action', 'comedy', 'drama', 'fa...</td>\n",
+       "      <td>8.8</td>\n",
+       "      <td>117129.0</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2074</th>\n",
+       "      <td>Kazuya Nakai</td>\n",
+       "      <td>Roronoa Zoro (voice)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>One Piece</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>1999</td>\n",
+       "      <td>['animation', 'action', 'comedy', 'drama', 'fa...</td>\n",
+       "      <td>8.8</td>\n",
+       "      <td>117129.0</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2075</th>\n",
+       "      <td>Akemi Okamura</td>\n",
+       "      <td>Nami (voice)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>One Piece</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>1999</td>\n",
+       "      <td>['animation', 'action', 'comedy', 'drama', 'fa...</td>\n",
+       "      <td>8.8</td>\n",
+       "      <td>117129.0</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2076</th>\n",
+       "      <td>Kappei Yamaguchi</td>\n",
+       "      <td>Usopp (voice)</td>\n",
+       "      <td>ACTOR</td>\n",
+       "      <td>One Piece</td>\n",
+       "      <td>SHOW</td>\n",
+       "      <td>1999</td>\n",
+       "      <td>['animation', 'action', 'comedy', 'drama', 'fa...</td>\n",
+       "      <td>8.8</td>\n",
+       "      <td>117129.0</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  name                character   role      title  type  \\\n",
+       "1661       Jeff Probst           Himself - Host  ACTOR   Survivor  SHOW   \n",
+       "2073     Mayumi Tanaka  Monkey D. Luffy (voice)  ACTOR  One Piece  SHOW   \n",
+       "2074      Kazuya Nakai     Roronoa Zoro (voice)  ACTOR  One Piece  SHOW   \n",
+       "2075     Akemi Okamura             Nami (voice)  ACTOR  One Piece  SHOW   \n",
+       "2076  Kappei Yamaguchi            Usopp (voice)  ACTOR  One Piece  SHOW   \n",
+       "\n",
+       "      release_year                                             genres  \\\n",
+       "1661          2000                                        ['reality']   \n",
+       "2073          1999  ['animation', 'action', 'comedy', 'drama', 'fa...   \n",
+       "2074          1999  ['animation', 'action', 'comedy', 'drama', 'fa...   \n",
+       "2075          1999  ['animation', 'action', 'comedy', 'drama', 'fa...   \n",
+       "2076          1999  ['animation', 'action', 'comedy', 'drama', 'fa...   \n",
+       "\n",
+       "      imdb_score  imdb_votes  imdb_score_rounded  \n",
+       "1661         7.4     24687.0                   7  \n",
+       "2073         8.8    117129.0                   9  \n",
+       "2074         8.8    117129.0                   9  \n",
+       "2075         8.8    117129.0                   9  \n",
+       "2076         8.8    117129.0                   9  "
+      ]
+     },
+     "execution_count": 52,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# filter dataframe using two conditions (scores to be in the range 4-9)\n",
+    "df_range = df_only_shows[(df_only_shows['imdb_score_rounded'] >= 4) & (df_only_shows['imdb_score_rounded'] <= 9)]\n",
+    "df_range.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "id": "7296dc76",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>imdb_score_rounded</th>\n",
+       "      <th>mean</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>4</td>\n",
+       "      <td>5277.583333</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>5</td>\n",
+       "      <td>3143.942568</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>6</td>\n",
+       "      <td>3481.717322</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>7</td>\n",
+       "      <td>8727.068211</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>8</td>\n",
+       "      <td>30299.460967</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>9</td>\n",
+       "      <td>126904.109515</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   imdb_score_rounded           mean\n",
+       "0                   4    5277.583333\n",
+       "1                   5    3143.942568\n",
+       "2                   6    3481.717322\n",
+       "3                   7    8727.068211\n",
+       "4                   8   30299.460967\n",
+       "5                   9  126904.109515"
+      ]
+     },
+     "execution_count": 57,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# group scores and corresponding average number of votes, reset index and print the result\n",
+    "df_grouped_scores = df_range.groupby('imdb_score_rounded')['imdb_votes'].agg(['mean']).reset_index()\n",
+    "df_grouped_scores"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "96a66d14",
+   "metadata": {},
+   "source": [
+    "Now for the final step! Round the column with the averages, rename both columns, and print the dataframe in descending order."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "id": "5999051b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>imdb score</th>\n",
+       "      <th>mean</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>9</td>\n",
+       "      <td>126904.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>8</td>\n",
+       "      <td>30299.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>7</td>\n",
+       "      <td>8727.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>4</td>\n",
+       "      <td>5278.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>6</td>\n",
+       "      <td>3482.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>5</td>\n",
+       "      <td>3144.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   imdb score      mean\n",
+       "5           9  126904.0\n",
+       "4           8   30299.0\n",
+       "3           7    8727.0\n",
+       "0           4    5278.0\n",
+       "2           6    3482.0\n",
+       "1           5    3144.0"
+      ]
+     },
+     "execution_count": 61,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# round column with averages\n",
+    "df_grouped_scores['mean'] = df_grouped_scores['mean'].round()\n",
+    "\n",
+    "# rename columns\n",
+    "df_grouped_scores = df_grouped_scores.rename(columns = {'imdb_score_rounded':'imdb score'})\n",
+    "df_grouped_scores\n",
+    "\n",
+    "# print dataframe in descending order\n",
+    "df_grouped_scores.sort_values(by='mean',ascending = False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "af07386d",
+   "metadata": {},
+   "source": [
+    "The assumption macthes the analysis: the shows with the top 3 scores have the most amounts of votes."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "84e29a37",
+   "metadata": {},
+   "source": [
+    "## Conclusion <a id='hypotheses'></a>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "984766a3",
+   "metadata": {},
+   "source": [
+    "The research done confirms that highly-rated shows released during the \"Golden Age\" of television also have the most votes. While shows with score 4 have more votes than ones with scores 5 and 6, the top three (scores 7-9) have the largest number. The data studied represents around 94% of the original set, so we can be confident in our findings."
+   ]
+  }
+ ],
+ "metadata": {
+  "ExecuteTimeLog": [
+   {
+    "duration": 328,
+    "start_time": "2024-12-31T18:05:35.656Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T18:05:38.352Z"
+   },
+   {
+    "duration": 519,
+    "start_time": "2024-12-31T18:06:12.550Z"
+   },
+   {
+    "duration": 142,
+    "start_time": "2024-12-31T18:06:54.301Z"
+   },
+   {
+    "duration": 113,
+    "start_time": "2024-12-31T18:07:05.716Z"
+   },
+   {
+    "duration": 13,
+    "start_time": "2024-12-31T18:07:22.380Z"
+   },
+   {
+    "duration": 6,
+    "start_time": "2024-12-31T18:07:32.982Z"
+   },
+   {
+    "duration": 10,
+    "start_time": "2024-12-31T18:08:13.561Z"
+   },
+   {
+    "duration": 23,
+    "start_time": "2024-12-31T18:08:32.584Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T18:21:11.549Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T18:23:38.077Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T18:23:58.641Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T18:29:00.783Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T18:29:38.120Z"
+   },
+   {
+    "duration": 33,
+    "start_time": "2024-12-31T18:29:55.597Z"
+   },
+   {
+    "duration": 24,
+    "start_time": "2024-12-31T18:30:17.159Z"
+   },
+   {
+    "duration": 25,
+    "start_time": "2024-12-31T18:30:32.396Z"
+   },
+   {
+    "duration": 24,
+    "start_time": "2024-12-31T18:31:24.705Z"
+   },
+   {
+    "duration": 27,
+    "start_time": "2024-12-31T18:34:38.493Z"
+   },
+   {
+    "duration": 30,
+    "start_time": "2024-12-31T18:37:35.517Z"
+   },
+   {
+    "duration": 29,
+    "start_time": "2024-12-31T18:38:00.030Z"
+   },
+   {
+    "duration": 24,
+    "start_time": "2024-12-31T18:40:47.134Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T18:41:13.027Z"
+   },
+   {
+    "duration": 21,
+    "start_time": "2024-12-31T18:41:50.933Z"
+   },
+   {
+    "duration": 21,
+    "start_time": "2024-12-31T18:44:57.002Z"
+   },
+   {
+    "duration": 17,
+    "start_time": "2024-12-31T18:45:06.294Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T18:45:38.685Z"
+   },
+   {
+    "duration": 28,
+    "start_time": "2024-12-31T18:54:16.537Z"
+   },
+   {
+    "duration": 30,
+    "start_time": "2024-12-31T18:54:29.037Z"
+   },
+   {
+    "duration": 26,
+    "start_time": "2024-12-31T18:54:52.910Z"
+   },
+   {
+    "duration": 26,
+    "start_time": "2024-12-31T18:55:07.379Z"
+   },
+   {
+    "duration": 26,
+    "start_time": "2024-12-31T18:55:09.877Z"
+   },
+   {
+    "duration": 26,
+    "start_time": "2024-12-31T18:55:45.583Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T18:56:05.754Z"
+   },
+   {
+    "duration": 13,
+    "start_time": "2024-12-31T18:56:37.603Z"
+   },
+   {
+    "duration": 5,
+    "start_time": "2024-12-31T18:56:47.508Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T18:57:04.846Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T18:57:21.511Z"
+   },
+   {
+    "duration": 5,
+    "start_time": "2024-12-31T18:57:59.978Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:03:26.584Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:05:27.465Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:05:35.304Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T19:06:55.426Z"
+   },
+   {
+    "duration": 14,
+    "start_time": "2024-12-31T19:08:39.935Z"
+   },
+   {
+    "duration": 10,
+    "start_time": "2024-12-31T19:08:48.017Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:08:54.610Z"
+   },
+   {
+    "duration": 2,
+    "start_time": "2024-12-31T19:09:00.607Z"
+   },
+   {
+    "duration": 110,
+    "start_time": "2024-12-31T19:09:02.699Z"
+   },
+   {
+    "duration": 10,
+    "start_time": "2024-12-31T19:09:05.637Z"
+   },
+   {
+    "duration": 23,
+    "start_time": "2024-12-31T19:09:08.594Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:09:12.815Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:09:15.775Z"
+   },
+   {
+    "duration": 27,
+    "start_time": "2024-12-31T19:09:19.764Z"
+   },
+   {
+    "duration": 24,
+    "start_time": "2024-12-31T19:09:22.130Z"
+   },
+   {
+    "duration": 23,
+    "start_time": "2024-12-31T19:09:26.127Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T19:09:29.767Z"
+   },
+   {
+    "duration": 19,
+    "start_time": "2024-12-31T19:09:33.236Z"
+   },
+   {
+    "duration": 13,
+    "start_time": "2024-12-31T19:09:41.918Z"
+   },
+   {
+    "duration": 155,
+    "start_time": "2024-12-31T19:10:24.624Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:10:37.403Z"
+   },
+   {
+    "duration": 21,
+    "start_time": "2024-12-31T19:10:42.680Z"
+   },
+   {
+    "duration": 20,
+    "start_time": "2024-12-31T19:10:49.266Z"
+   },
+   {
+    "duration": 2,
+    "start_time": "2024-12-31T19:10:54.600Z"
+   },
+   {
+    "duration": 113,
+    "start_time": "2024-12-31T19:10:55.304Z"
+   },
+   {
+    "duration": 9,
+    "start_time": "2024-12-31T19:10:56.280Z"
+   },
+   {
+    "duration": 22,
+    "start_time": "2024-12-31T19:10:57.800Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T19:11:00.017Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:11:02.135Z"
+   },
+   {
+    "duration": 23,
+    "start_time": "2024-12-31T19:11:05.713Z"
+   },
+   {
+    "duration": 25,
+    "start_time": "2024-12-31T19:11:11.354Z"
+   },
+   {
+    "duration": 24,
+    "start_time": "2024-12-31T19:11:18.099Z"
+   },
+   {
+    "duration": 29,
+    "start_time": "2024-12-31T19:11:20.431Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T19:11:26.096Z"
+   },
+   {
+    "duration": 19,
+    "start_time": "2024-12-31T19:11:30.236Z"
+   },
+   {
+    "duration": 13,
+    "start_time": "2024-12-31T19:11:35.926Z"
+   },
+   {
+    "duration": 19,
+    "start_time": "2024-12-31T19:11:39.602Z"
+   },
+   {
+    "duration": 39,
+    "start_time": "2024-12-31T19:11:46.323Z"
+   },
+   {
+    "duration": 42,
+    "start_time": "2024-12-31T19:12:05.288Z"
+   },
+   {
+    "duration": 70,
+    "start_time": "2024-12-31T19:12:16.830Z"
+   },
+   {
+    "duration": 38,
+    "start_time": "2024-12-31T19:13:12.755Z"
+   },
+   {
+    "duration": 46,
+    "start_time": "2024-12-31T19:13:15.019Z"
+   },
+   {
+    "duration": 43,
+    "start_time": "2024-12-31T19:17:40.851Z"
+   },
+   {
+    "duration": 37,
+    "start_time": "2024-12-31T19:18:11.172Z"
+   },
+   {
+    "duration": 6,
+    "start_time": "2024-12-31T19:19:44.779Z"
+   },
+   {
+    "duration": 12,
+    "start_time": "2024-12-31T19:23:13.656Z"
+   },
+   {
+    "duration": 44,
+    "start_time": "2024-12-31T19:23:54.032Z"
+   },
+   {
+    "duration": 47,
+    "start_time": "2024-12-31T19:24:17.634Z"
+   },
+   {
+    "duration": 12,
+    "start_time": "2024-12-31T19:27:50.139Z"
+   },
+   {
+    "duration": 20,
+    "start_time": "2024-12-31T19:27:56.244Z"
+   },
+   {
+    "duration": 18,
+    "start_time": "2024-12-31T19:28:05.969Z"
+   },
+   {
+    "duration": 13,
+    "start_time": "2024-12-31T19:28:35.973Z"
+   },
+   {
+    "duration": 19,
+    "start_time": "2024-12-31T19:28:49.607Z"
+   },
+   {
+    "duration": 14,
+    "start_time": "2024-12-31T19:28:54.860Z"
+   },
+   {
+    "duration": 9,
+    "start_time": "2024-12-31T19:31:36.600Z"
+   },
+   {
+    "duration": 15,
+    "start_time": "2024-12-31T19:31:43.022Z"
+   },
+   {
+    "duration": 14,
+    "start_time": "2024-12-31T19:32:03.490Z"
+   },
+   {
+    "duration": 282,
+    "start_time": "2024-12-31T21:21:36.210Z"
+   },
+   {
+    "duration": 169,
+    "start_time": "2024-12-31T21:21:40.266Z"
+   },
+   {
+    "duration": 15,
+    "start_time": "2024-12-31T21:21:42.795Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T21:21:47.263Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T21:21:51.573Z"
+   },
+   {
+    "duration": 32,
+    "start_time": "2024-12-31T21:21:54.660Z"
+   },
+   {
+    "duration": 29,
+    "start_time": "2024-12-31T21:21:57.805Z"
+   },
+   {
+    "duration": 26,
+    "start_time": "2024-12-31T21:22:01.535Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T21:22:07.455Z"
+   },
+   {
+    "duration": 20,
+    "start_time": "2024-12-31T21:22:10.219Z"
+   },
+   {
+    "duration": 391,
+    "start_time": "2024-12-31T21:22:13.539Z"
+   },
+   {
+    "duration": 19,
+    "start_time": "2024-12-31T21:22:29.625Z"
+   },
+   {
+    "duration": 22,
+    "start_time": "2024-12-31T21:22:33.170Z"
+   },
+   {
+    "duration": 2,
+    "start_time": "2024-12-31T21:22:45.191Z"
+   },
+   {
+    "duration": 114,
+    "start_time": "2024-12-31T21:22:45.730Z"
+   },
+   {
+    "duration": 12,
+    "start_time": "2024-12-31T21:22:46.470Z"
+   },
+   {
+    "duration": 22,
+    "start_time": "2024-12-31T21:22:47.194Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T21:22:48.581Z"
+   },
+   {
+    "duration": 6,
+    "start_time": "2024-12-31T21:22:49.785Z"
+   },
+   {
+    "duration": 27,
+    "start_time": "2024-12-31T21:22:50.265Z"
+   },
+   {
+    "duration": 27,
+    "start_time": "2024-12-31T21:22:50.970Z"
+   },
+   {
+    "duration": 27,
+    "start_time": "2024-12-31T21:22:51.464Z"
+   },
+   {
+    "duration": 29,
+    "start_time": "2024-12-31T21:22:52.055Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T21:22:53.343Z"
+   },
+   {
+    "duration": 19,
+    "start_time": "2024-12-31T21:22:54.485Z"
+   },
+   {
+    "duration": 18,
+    "start_time": "2024-12-31T21:22:55.883Z"
+   },
+   {
+    "duration": 19,
+    "start_time": "2024-12-31T21:22:58.367Z"
+   },
+   {
+    "duration": 41,
+    "start_time": "2024-12-31T21:23:01.494Z"
+   },
+   {
+    "duration": 51,
+    "start_time": "2024-12-31T21:23:03.638Z"
+   },
+   {
+    "duration": 46,
+    "start_time": "2024-12-31T21:23:10.030Z"
+   },
+   {
+    "duration": 39,
+    "start_time": "2024-12-31T21:23:11.854Z"
+   },
+   {
+    "duration": 7,
+    "start_time": "2024-12-31T21:23:14.496Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T21:33:59.914Z"
+   },
+   {
+    "duration": 7,
+    "start_time": "2024-12-31T21:35:42.374Z"
+   },
+   {
+    "duration": 5,
+    "start_time": "2024-12-31T21:38:14.860Z"
+   },
+   {
+    "duration": 7,
+    "start_time": "2024-12-31T21:38:29.729Z"
+   },
+   {
+    "duration": 14,
+    "start_time": "2024-12-31T21:39:37.317Z"
+   },
+   {
+    "duration": 6,
+    "start_time": "2024-12-31T21:39:54.965Z"
+   },
+   {
+    "duration": 4,
+    "start_time": "2024-12-31T21:44:56.275Z"
+   },
+   {
+    "duration": 20,
+    "start_time": "2024-12-31T21:45:53.755Z"
+   },
+   {
+    "duration": 14,
+    "start_time": "2024-12-31T21:46:03.743Z"
+   },
+   {
+    "duration": 14,
+    "start_time": "2024-12-31T21:48:22.320Z"
+   },
+   {
+    "duration": 215,
+    "start_time": "2024-12-31T21:51:43.958Z"
+   },
+   {
+    "duration": 15,
+    "start_time": "2024-12-31T21:52:57.245Z"
+   },
+   {
+    "duration": 13,
+    "start_time": "2024-12-31T21:54:31.335Z"
+   },
+   {
+    "duration": 7,
+    "start_time": "2024-12-31T21:55:14.847Z"
+   },
+   {
+    "duration": 14,
+    "start_time": "2024-12-31T21:56:59.960Z"
+   },
+   {
+    "duration": 5,
+    "start_time": "2024-12-31T21:57:22.587Z"
+   },
+   {
+    "duration": 6,
+    "start_time": "2024-12-31T21:57:28.448Z"
+   },
+   {
+    "duration": 15,
+    "start_time": "2024-12-31T22:04:05.262Z"
+   },
+   {
+    "duration": 12,
+    "start_time": "2024-12-31T22:05:05.490Z"
+   },
+   {
+    "duration": 12,
+    "start_time": "2024-12-31T22:05:52.635Z"
+   },
+   {
+    "duration": 7,
+    "start_time": "2024-12-31T22:12:15.441Z"
+   },
+   {
+    "duration": 8,
+    "start_time": "2024-12-31T22:12:32.120Z"
+   },
+   {
+    "duration": 9,
+    "start_time": "2024-12-31T22:14:39.942Z"
+   },
+   {
+    "duration": 9,
+    "start_time": "2024-12-31T22:15:16.215Z"
+   },
+   {
+    "duration": 9,
+    "start_time": "2024-12-31T22:23:08.582Z"
+   },
+   {
+    "duration": 6,
+    "start_time": "2024-12-31T22:24:08.784Z"
+   },
+   {
+    "duration": 6,
+    "start_time": "2024-12-31T22:24:22.995Z"
+   },
+   {
+    "duration": 7,
+    "start_time": "2024-12-31T22:30:34.680Z"
+   },
+   {
+    "duration": 8,
+    "start_time": "2024-12-31T22:31:17.280Z"
+   },
+   {
+    "duration": 471,
+    "start_time": "2024-12-31T22:36:39.010Z"
+   },
+   {
+    "duration": 480,
+    "start_time": "2024-12-31T22:36:58.891Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T22:38:16.104Z"
+   },
+   {
+    "duration": 545,
+    "start_time": "2024-12-31T22:42:34.468Z"
+   },
+   {
+    "duration": 177,
+    "start_time": "2024-12-31T22:42:49.739Z"
+   },
+   {
+    "duration": 150,
+    "start_time": "2024-12-31T22:43:56.770Z"
+   },
+   {
+    "duration": 154,
+    "start_time": "2024-12-31T22:46:59.555Z"
+   },
+   {
+    "duration": 151,
+    "start_time": "2024-12-31T22:47:05.050Z"
+   },
+   {
+    "duration": 44,
+    "start_time": "2024-12-31T22:52:00.254Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T22:53:33.030Z"
+   },
+   {
+    "duration": 3,
+    "start_time": "2024-12-31T22:54:02.219Z"
+   },
+   {
+    "duration": 246,
+    "start_time": "2024-12-31T22:54:27.491Z"
+   },
+   {
+    "duration": 243,
+    "start_time": "2024-12-31T22:55:26.915Z"
+   },
+   {
+    "duration": 383,
+    "start_time": "2024-12-31T22:57:48.399Z"
+   }
+  ],
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.19"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": true,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": false
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
