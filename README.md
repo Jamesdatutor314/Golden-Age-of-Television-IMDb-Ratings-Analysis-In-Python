@@ -35,7 +35,7 @@ README.md: Documentation summarizing the project.
 4. Outliers: Some low-rated shows (e.g., scores of 2–3) had insufficient votes for meaningful analysis.
 
 # Skills Used
-- Python (pandas, matplotlib, seaborn)
+- Python (pandas)
 - Data Cleaning and Preprocessing
 - Exploratory Data Analysis
 - Data Visualization
